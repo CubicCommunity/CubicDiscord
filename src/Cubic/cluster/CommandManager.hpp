@@ -24,4 +24,4 @@ namespace cubic {
 };
 
 #define CUBIC_REGISTER_COMMAND(T) \
-    static cubic::cluster::CommandRegister reg(std::make_shared<T>())
+    static cubic::CommandRegister reg(std::make_shared<T>())
