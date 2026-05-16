@@ -7,13 +7,21 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 find_package(dpp CONFIG REQUIRED)
+find_package(OpenSSL REQUIRED)
 CPMAddPackage("gh:dankmeme01/asp2#main")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     dpp::dpp
+    OpenSSL::SSL
+    OpenSSL::Crypto
     asp
     fmt
 )
+
+option(CUBIC_LOCAL_BUILD "Enable local testing mode" ON)
+if(CUBIC_LOCAL_BUILD)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE CUBIC_LOCAL_BUILD=1)
+endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE src)
 

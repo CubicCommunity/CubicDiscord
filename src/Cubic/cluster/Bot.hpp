@@ -6,25 +6,14 @@
 
 namespace cubic {
     namespace cluster {
-        class Bot final : public base::Singleton<Bot> {
+        class Bot final {
         private:
-            dpp::cluster m_bot;
-
-        protected:
-            Bot();
+            static dpp::cluster m_bot;
 
         public:
-            dpp::cluster* operator->() {
-                return &m_bot;
-            };
-
-            dpp::cluster& operator*() {
+            inline static dpp::cluster& get() noexcept {
                 return m_bot;
             };
         };
-    };
-
-    namespace bot {
-        cluster::Bot& get();
     };
 };

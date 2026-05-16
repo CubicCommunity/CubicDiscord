@@ -2,16 +2,24 @@
 
 using namespace cubic::prelude;
 
-static auto const c = Command::create(
-    dpp::slashcommand()
-        .set_name("ping")
-        .set_description("Ping the bot to test its speed.")
-        .set_type(dpp::slashcommand_contextmenu_type::ctxm_chat_input)
-        .set_interaction_contexts({
-            dpp::interaction_context_type::itc_bot_dm,
-            dpp::interaction_context_type::itc_guild,
-        }),
-    [](dpp::slashcommand_t const& ev) -> dpp::task<void> {
+class PingCommand : public base::Command {
+public:
+    std::string name() const override {
+        return "ping";
+    };
+
+    dpp::slashcommand build() const override {
+        return dpp::slashcommand()
+            .set_name("ping")
+            .set_description("Ping the bot to test its speed.")
+            .set_type(dpp::slashcommand_contextmenu_type::ctxm_chat_input)
+            .set_interaction_contexts({
+                dpp::interaction_context_type::itc_bot_dm,
+                dpp::interaction_context_type::itc_guild,
+            });
+    };
+
+    dpp::task<void> handle(dpp::slashcommand_t const& ev) override {
         auto const start = asp::Instant::now();
 
         co_await ev.co_reply(dpp::message(":ping_pong:"));
@@ -30,6 +38,8 @@ static auto const c = Command::create(
                             fmt::format("{}ms", dur))
                         .add_field(
                             "API Latency",
-                            fmt::format("{}ms", bot::get()->get_shard(0)->websocket_ping))));
-    })
-                          ->autoRegister();
+                            fmt::format("{}ms", Bot::get().get_shard(0)->websocket_ping))));
+    };
+};
+
+CUBIC_REGISTER_COMMAND(PingCommand);

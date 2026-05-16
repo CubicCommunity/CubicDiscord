@@ -4,8 +4,4 @@
 
 using namespace cubic::prelude;
 
-Bot::Bot() : m_bot(env::get("TOKEN").value_or("")) {};
-
-Bot& cubic::bot::get() {
-    return *Bot::get();
-};
+dpp::cluster Bot::m_bot = dpp::cluster(env::get("TOKEN").value_or(""));

@@ -36,7 +36,11 @@ namespace cubic {
     };
 
     namespace server {
+#ifdef CUBIC_LOCAL_BUILD
+        constexpr dpp::snowflake id = 1330925786634522787;
+#else
         constexpr dpp::snowflake id = 460081436637134859;
+#endif
     };
 
     namespace prelude {

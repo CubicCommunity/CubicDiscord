@@ -6,33 +6,34 @@
 
 using namespace cubic::prelude;
 
-void CommandManager::registerCommand(std::shared_ptr<Command> cmd) {
-    m_commands[cmd->getCommand().name] = cmd;
+void CommandManager::registerCommand(std::shared_ptr<base::Command> cmd) {
+    log::debug("Integrating /{}...", cmd->name());
+    m_commands[cmd->name()] = std::move(cmd);
 };
 
 void CommandManager::registerToDiscord(dpp::snowflake server) {
     std::vector<dpp::slashcommand> cmd_list;
     cmd_list.reserve(m_commands.size());
 
-    for (auto& [name, cmd] : m_commands) cmd_list.push_back(cmd->getCommand());
+    for (auto& [name, cmd] : m_commands) cmd_list.push_back(cmd->build());
 
-    bot::get()->guild_bulk_command_create(cmd_list, server);
+    Bot::get().guild_bulk_command_create(cmd_list, server);
 };
 
 void CommandManager::clearFromDiscord(dpp::snowflake server) {
     m_commands.clear();
-    bot::get()->guild_bulk_command_delete(server::id);
+    Bot::get().guild_bulk_command_delete(server::id);
 };
 
 void CommandManager::handleCommand(dpp::slashcommand_t const& event) {
-    auto const& name = event.command.get_command_name();
+    auto const name = event.command.get_command_name();
 
     if (event.command.type == dpp::interaction_type::it_application_command) {
         log::trace("Handling slash command /{}", name);
 
         if (auto it = m_commands.find(name); it != m_commands.end()) {
             log::debug("Found slash command /{}", name);
-            it->second->getCallback()(event);
+            (void)it->second->handle(event);
         } else {
             log::error("Failed to find slash command /{}", name);
             event.reply(
@@ -51,4 +52,8 @@ void CommandManager::handleCommand(dpp::slashcommand_t const& event) {
                         .set_description(":x: Invalid interaction type, slash command expected.")
                         .set_color(theme::colors::secondary)));
     };
+};
+
+CommandRegister::CommandRegister(std::shared_ptr<base::Command> cmd) {
+    if (auto cm = CommandManager::get()) cm->registerCommand(std::move(cmd));
 };
