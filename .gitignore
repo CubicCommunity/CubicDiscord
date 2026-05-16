@@ -1,0 +1,50 @@
+# CMake build artifacts
+build/
+[Cc]MakeCache.txt
+[Cc]MakeFiles/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+Testing/
+*.ninja
+.ninja_log
+.ninja_deps
+.cache/
+
+# vcpkg internals
+vcpkg/buildtrees/
+vcpkg/packages/
+vcpkg/downloads/
+vcpkg/installed/
+vcpkg_installed/
+.vcpkg-root
+
+# Binaries
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+*.pdb
+
+# Logs and temp
+*.log
+*.tmp
+*.swp
+
+# IDE/editor files
+.vscode/
+.idea/
+*.user
+*.suo
+*.vcxproj*
+*.xcodeproj/
+*.DS_Store
+
+# Scoop/Windows specific
+scoop/
+
+*.sh
+*.bat
+*.env

@@ -1,0 +1,30 @@
+name: Build Source
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+
+jobs:
+    build-linux:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v6
+
+            - name: Install vcpkg
+              uses: lukka/run-vcpkg@v11
+              with:
+                  vcpkgDirectory: "${{ github.workspace }}/vcpkg"
+                  vcpkgGitCommitId: "latest"
+
+            - name: Configure CMake
+              run: cmake -B build -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release
+
+            - name: Build
+              run: cmake --build build --config Release -j$(nproc)
+
+            - uses: actions/upload-artifact@v7
+              with:
+                  name: cubicdiscord-linux
+                  path: build/CubicDiscord
