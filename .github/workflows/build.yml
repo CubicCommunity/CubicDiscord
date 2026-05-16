@@ -30,10 +30,18 @@ jobs:
                   vcpkgGitCommitId: "56bb2411609227288b70117ead2c47585ba07713"
                   vcpkgDirectory: "${{ github.workspace }}/vcpkg"
 
+            - name: Install newer Clang
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y clang-19 lld-19
+                  sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-19 100
+                  sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-19 100
+
             - name: Configure CMake
               run: cmake -B build \
                   -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake \
-                  -DCMAKE_BUILD_TYPE=Release
+                  -DCMAKE_BUILD_TYPE=Release \
+                  -DVCPKG_TARGET_TRIPLET=x64-linux-release
               env:
                   CC: clang
                   CXX: clang++
