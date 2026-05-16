@@ -18,7 +18,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     fmt
 )
 
-option(CUBIC_LOCAL_BUILD "Enable local testing mode" ON)
+option(CUBIC_LOCAL_BUILD "Enable local testing mode" OFF)
 if(CUBIC_LOCAL_BUILD)
     target_compile_definitions(${PROJECT_NAME} PRIVATE CUBIC_LOCAL_BUILD=1)
 endif()

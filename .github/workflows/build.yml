@@ -10,9 +10,19 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v4
 
             - uses: lukka/get-cmake@v4.3.2
+
+            - name: Cache vcpkg
+              uses: actions/cache@v3
+              with:
+                  path: |
+                      ${{ github.workspace }}/vcpkg_installed
+                      ${{ github.workspace }}/build/vcpkg_installed
+                  key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+                  restore-keys: |
+                      vcpkg-${{ runner.os }}-
 
             - name: Setup vcpkg
               uses: lukka/run-vcpkg@v11
@@ -21,12 +31,17 @@ jobs:
                   vcpkgDirectory: "${{ github.workspace }}/vcpkg"
 
             - name: Configure CMake
-              run: cmake -B build -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release
+              run: cmake -B build \
+                  -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake \
+                  -DCMAKE_BUILD_TYPE=Release
+              env:
+                  CC: clang
+                  CXX: clang++
 
             - name: Build
               run: cmake --build build --config Release -j$(nproc)
 
-            - uses: actions/upload-artifact@v7
+            - uses: actions/upload-artifact@v4
               with:
                   name: cubicdiscord-linux
                   path: build/CubicDiscord
