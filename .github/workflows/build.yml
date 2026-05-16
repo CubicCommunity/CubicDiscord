@@ -12,11 +12,13 @@ jobs:
         steps:
             - uses: actions/checkout@v6
 
-            - name: Install vcpkg
+            - uses: lukka/get-cmake@v4.3.2
+
+            - name: Setup vcpkg
               uses: lukka/run-vcpkg@v11
               with:
                   vcpkgDirectory: "${{ github.workspace }}/vcpkg"
-                  vcpkgGitCommitId: "latest"
+                  vcpkgGitCommitId: "e0612b42ce44e55a0e630f2ee9d3c533a63d8bc1"
 
             - name: Configure CMake
               run: cmake -B build -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release
