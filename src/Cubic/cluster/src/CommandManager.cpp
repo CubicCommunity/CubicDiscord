@@ -34,7 +34,7 @@ void CommandManager::registerAll(dpp::snowflake server) {
     log::info("Command registration finished");
 };
 
-void CommandManager::handleCommand(dpp::slashcommand_t const& event) {
+dpp::task<void> CommandManager::handleCommand(dpp::slashcommand_t const& event) {
     auto const name = event.command.get_command_name();
     log::debug("Received command event for '{}'", name);
 
@@ -44,8 +44,18 @@ void CommandManager::handleCommand(dpp::slashcommand_t const& event) {
         if (auto it = m_commands.find(name); it != m_commands.end()) {
             log::debug("Found slash command '{}'", name);
 
-            event.thinking(true);
-            (void)it->second->handle(event);
+            if (auto cmd = it->second) {
+                event.thinking(cmd->ephemeral());
+                co_await cmd->handle(event);
+            } else {
+                log::error("Command '{}' is null", name);
+                event.reply(
+                    dpp::message()
+                        .add_embed(
+                            dpp::embed()
+                                .set_description(":x: Command found but has no callback.")
+                                .set_color(theme::colors::secondary)));
+            };
         } else {
             log::error("Failed to find slash command '{}'", name);
             event.reply(
@@ -64,6 +74,8 @@ void CommandManager::handleCommand(dpp::slashcommand_t const& event) {
                         .set_description(":x: Invalid interaction type, slash command expected.")
                         .set_color(theme::colors::secondary)));
     };
+
+    co_return;
 };
 
 CommandQueue::CommandQueue(std::shared_ptr<base::Command> cmd) {

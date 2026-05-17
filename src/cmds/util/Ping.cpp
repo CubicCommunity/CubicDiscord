@@ -19,19 +19,28 @@ public:
             });
     };
 
-    dpp::task<void> handle(const dpp::slashcommand_t& ev) override {
+    dpp::task<void> handle(dpp::slashcommand_t const& ev) override {
         auto const start = asp::Instant::now();
 
         auto res = co_await ev.co_reply(dpp::message(":ping_pong:"));
         if (res.is_error()) {
             log::error("Failed to send ping message: {}", res.get_error().message);
+            ev.reply(
+                dpp::message()
+                    .add_embed(
+                        dpp::embed()
+                            .set_description(":x: Unknown error.")
+                            .set_color(theme::colors::secondary)));
+
             co_return;
         };
 
         auto const end = asp::Instant::now();
         auto dur = end.durationSince(start).millis();
 
-        ev.edit_response(
+        log::debug("Ping command latency: {}ms", dur);
+
+        ev.edit_original_response(
             dpp::message()
                 .add_embed(
                     dpp::embed()

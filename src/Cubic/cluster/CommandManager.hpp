@@ -16,7 +16,7 @@ namespace cubic {
         public:
             void registerAll(dpp::snowflake server);
 
-            void handleCommand(dpp::slashcommand_t const& event);
+            dpp::task<void> handleCommand(dpp::slashcommand_t const& event);
         };
     };
 
