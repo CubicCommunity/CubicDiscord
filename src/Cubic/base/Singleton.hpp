@@ -18,7 +18,7 @@ namespace cubic {
 
         public:
             static T* get() noexcept {
-                auto inst = new (std::nothrow) T();
+                static auto inst = new (std::nothrow) T();
                 return inst;
             };
         };

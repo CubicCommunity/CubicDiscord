@@ -4,8 +4,6 @@
 
 using namespace cubic::prelude;
 
-static auto cm = CommandManager::get();  // static init
-
 void dpp::bignumber::bn_deleter::operator()(struct dpp::openssl_bignum* bn) const noexcept {
     if (bn) BN_free(reinterpret_cast<BIGNUM*>(bn));
 };
@@ -28,14 +26,9 @@ int main() {
     bot.on_ready([](const dpp::ready_t& event) {
         log::debug("Ready event called");
 
-        if (dpp::run_once<struct clear_bot_commands>()) {
-            log::info("Clearing all commands");
-            if (auto cm = CommandManager::get()) cm->clearFromDiscord(server::id);
-        };
-
         if (dpp::run_once<struct register_bot_commands>()) {
             log::info("Registering all commands");
-            if (auto cm = CommandManager::get()) cm->registerToDiscord(server::id);
+            if (auto cm = CommandManager::get()) cm->registerAll(server::id);
         };
     });
 
