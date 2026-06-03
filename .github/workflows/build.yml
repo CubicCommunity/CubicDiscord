@@ -42,7 +42,8 @@ jobs:
               run: cmake -B build \
                   -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake \
                   -DCMAKE_BUILD_TYPE=Release \
-                  -DVCPKG_TARGET_TRIPLET=x64-linux-release
+                  -DVCPKG_TARGET_TRIPLET=x64-linux
+
               env:
                   CC: clang
                   CXX: clang++
