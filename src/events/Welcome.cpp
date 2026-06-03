@@ -25,9 +25,16 @@ public:
             if (newM.has_completed_onboarding() && !oldM.has_completed_onboarding()) {
                 log::info("User {} has completed onboarding!", newM.get_user()->global_name);
 
-                bot.direct_message_create(
+                auto dmRes = co_await bot.co_direct_message_create(
                     newM.user_id,
                     message::dm::welcome());
+                if (dmRes.is_error()) {
+                    log::error("Failed to send welcome DM to '{}': {}",
+                        newM.get_user()->global_name,
+                        dmRes.get_error().message);
+
+                    co_return;
+                };
 
                 auto channelRes = co_await bot.co_channel_get(server::welcomeChannel);
                 if (channelRes.is_error()) {
@@ -36,6 +43,14 @@ public:
                 };
 
                 auto channel = channelRes.get<dpp::channel>();
+
+                auto msgRes = co_await bot.co_message_create(dpp::message(channel.id, fmt::format("Welcome to Cubic Studios's community server, {}! Please check your DMs for important information about the server and its channels.", newM.get_user()->global_name)));
+                if (msgRes.is_error()) {
+                    log::error("Failed to send welcome message to '{}': {}", newM.get_user()->global_name, msgRes.get_error().message);
+                    co_return;
+                };
+
+                co_return;
             };
 
             co_return;

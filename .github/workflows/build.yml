@@ -8,9 +8,8 @@ on:
 jobs:
     build-linux:
         runs-on: ubuntu-latest
-
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
 
             - uses: lukka/get-cmake@v4.3.2
 
@@ -19,17 +18,11 @@ jobs:
               with:
                   vcpkgGitCommitId: "56bb2411609227288b70117ead2c47585ba07713"
                   vcpkgDirectory: "${{ github.workspace }}/vcpkg"
-
-            - name: Install newer Clang
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y clang-19 lld-19
-                  sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-19 100
-                  sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-19 100
-
             - name: Configure CMake
-              run: "cmake -B build -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DVCPKG_BUILD_TYPE=release -DVCPKG_TARGET_TRIPLET=x64-linux"
-
+              run: cmake -B build \
+                  -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake \
+                  -DCMAKE_BUILD_TYPE=Release \
+                  -DVCPKG_TARGET_TRIPLET=x64-linux
               env:
                   CC: clang
                   CXX: clang++
@@ -37,7 +30,51 @@ jobs:
             - name: Build
               run: cmake --build build --config Release -j$(nproc)
 
-            - uses: actions/upload-artifact@v4
+            - name: Collect runtime libraries
+              run: |
+                  mkdir -p artifacts/libs
+                  cp ${{ github.workspace }}/vcpkg_installed/x64-linux/lib/libfmt.so* artifacts/libs/ || true
+                  cp ${{ github.workspace }}/vcpkg_installed/x64-linux/lib/libssl.so* artifacts/libs/ || true
+                  cp ${{ github.workspace }}/vcpkg_installed/x64-linux/lib/libcrypto.so* artifacts/libs/ || true
+                  cp ${{ github.workspace }}/vcpkg_installed/x64-linux/lib/libdpp.so* artifacts/libs/ || true
+
+            - uses: actions/upload-artifact@v7
               with:
                   name: cubicdiscord-linux
                   path: build/CubicDiscord
+            - uses: actions/upload-artifact@v7
+              with:
+                  name: cubicdiscord-libs
+                  path: artifacts/libs
+
+    nightly:
+        name: Nightly Release
+        runs-on: ubuntu-latest
+        needs: ["build-linux"]
+        permissions:
+            contents: write
+
+        steps:
+            - uses: actions/download-artifact@v8
+              with:
+                  path: ./artifacts/
+                  merge-multiple: true
+
+            - name: Get latest release tag
+              id: getrelease
+              run: echo "tag=$(curl -s https://api.github.com/repos/${{ github.event.repository.full_name }}/releases/latest | jq -r '.tag_name // "${{ github.event.repository.default_branch }}"')" >> $GITHUB_OUTPUT
+
+            - name: Publish Nightly release
+              id: publish-nightly
+              if: ${{ github.ref_name == github.event.repository.default_branch }}
+              uses: andelf/nightly-release@main
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: dev
+                  name: "Development Release"
+                  body: |
+                      **Development build for commit ${{ github.sha }}**.
+                      > [`View Current Changes`](${{ github.event.repository.html_url }}/compare/${{ steps.getrelease.outputs.tag }}...nightly)
+                  files: |
+                      ./artifacts/**/*
