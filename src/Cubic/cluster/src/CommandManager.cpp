@@ -7,29 +7,30 @@
 using namespace cubic::prelude;
 
 void CommandManager::registerAll(dpp::snowflake server) {
-    if (queuedCommands().empty()) return log::critical("No commands found");
+    auto& cmds = base::Command::getAll();
+    if (cmds.empty()) return log::critical("No commands found");
 
-    for (auto& cmd : queuedCommands()) {
+    for (auto const& cmd : cmds) {
         auto name = cmd->name();
 
         log::debug("Integrating '{}'...", name);
-        m_commands[std::move(name)] = std::move(cmd);
+        m_commands[std::move(name)] = cmd;
     };
 
-    queuedCommands().clear();
-    queuedCommands().shrink_to_fit();
+    cmds.clear();
+    cmds.shrink_to_fit();
 
-    std::vector<dpp::slashcommand> cmds;
-    cmds.reserve(m_commands.size());
+    std::vector<dpp::slashcommand> commands;
+    commands.reserve(m_commands.size());
 
-    for (auto& [name, cmd] : m_commands) {
+    for (auto const& [name, cmd] : m_commands) {
         log::trace("Building command '{}'...", cmd->name());
-        cmds.push_back(cmd->build());
+        commands.push_back(cmd->build());
     };
 
-    log::debug("Bulk registering {} commands to Discord...", cmds.size());
+    log::debug("Bulk registering {} commands to Discord...", commands.size());
 
-    Bot::get().guild_bulk_command_create(cmds, server);
+    Bot::get().guild_bulk_command_create(commands, server);
 
     log::info("Command registration finished");
 };
@@ -76,8 +77,4 @@ dpp::task<void> CommandManager::handleCommand(dpp::slashcommand_t const& event) 
     };
 
     co_return;
-};
-
-CommandQueue::CommandQueue(std::shared_ptr<base::Command> cmd) {
-    queuedCommands().push_back(std::move(cmd));
 };

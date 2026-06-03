@@ -27,9 +27,7 @@ namespace cubic {
 
             return std::nullopt;
 #else
-            const char* value = std::getenv(name);
-            if (value)
-                return std::string(value);
+            if (const char* value = std::getenv(name)) return std::string(value);
             return std::nullopt;
 #endif
         };

@@ -2,9 +2,9 @@
 
 using namespace cubic::prelude;
 
-class PingCommand : public base::Command {
+class PingCommand final : public base::Command {
 public:
-    std::string name() const override {
+    std::string name() const noexcept override {
         return "ping";
     };
 
@@ -47,8 +47,10 @@ public:
                         .set_title("Ping")
                         .set_color(theme::colors::primary)
                         .add_field("Latency", fmt::format("{}ms", dur))
-                        .add_field("API Latency", fmt::format("{}ms", Bot::get().get_shard(0)->websocket_ping))));
+                        .add_field("API Latency", fmt::format("{}ms", static_cast<int>(Bot::get().get_shard(0)->websocket_ping * 1000.0)))));
+
+        co_return;
     };
 };
 
-CUBIC_QUEUE_COMMAND(PingCommand);
+static PingCommand cmd;

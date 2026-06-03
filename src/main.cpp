@@ -30,6 +30,8 @@ int main() {
         if (dpp::run_once<struct register_bot_commands>()) {
             log::info("Registering all commands");
             if (auto cm = CommandManager::get()) cm->registerAll(server::id);
+
+            for (auto const& ev : base::EventHandler::getAll()) ev->init(Bot::get());
         };
     });
 
