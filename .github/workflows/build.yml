@@ -28,7 +28,7 @@ jobs:
                   sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-19 100
 
             - name: Configure CMake
-              run: "cmake -B build -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DVCPKG_BUILD_TYPE=release -DVCPKG_TARGET_TRIPLET=x64-linux-rel"
+              run: "cmake -B build -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DVCPKG_BUILD_TYPE=release -DVCPKG_TARGET_TRIPLET=x64-linux"
 
               env:
                   CC: clang
