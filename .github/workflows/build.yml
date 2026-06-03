@@ -30,13 +30,17 @@ jobs:
             # i have no idea how else to get the runtime libs :(
             - name: Collect runtime libraries
               run: |
+                  ls -l vcpkg/packages/*_x64-linux/lib || true
+                  ldd build/CubicDiscord
                   mkdir -p artifacts/libs
-                  cp ${{ github.workspace }}/vcpkg_installed/x64-linux/bin/*.so* artifacts/libs/ || true
+                  cp vcpkg/packages/*_x64-linux/lib/*.so* artifacts/libs/ || true
+                  ls -l artifacts/libs || true
 
             - uses: actions/upload-artifact@v7
               with:
                   name: cubicdiscord-linux
                   path: build/CubicDiscord
+
             - uses: actions/upload-artifact@v7
               with:
                   name: cubicdiscord-libs
