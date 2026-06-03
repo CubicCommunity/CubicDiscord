@@ -14,17 +14,6 @@ jobs:
 
             - uses: lukka/get-cmake@v4.3.2
 
-            - name: Cache vcpkg
-              uses: actions/cache@v5
-              with:
-                  path: |
-                      ${{ github.workspace }}/build/vcpkg_installed
-                      ${{ github.workspace }}/vcpkg/downloads
-                      ${{ github.workspace }}/vcpkg/packages
-                  key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
-                  restore-keys: |
-                      vcpkg-${{ runner.os }}-
-
             - name: Setup vcpkg
               uses: lukka/run-vcpkg@v11
               with:
@@ -39,10 +28,7 @@ jobs:
                   sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-19 100
 
             - name: Configure CMake
-              run: cmake -B build \
-                  -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake \
-                  -DCMAKE_BUILD_TYPE=Release \
-                  -DVCPKG_TARGET_TRIPLET=x64-linux
+              run: "cmake -B build -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64-linux"
 
               env:
                   CC: clang
