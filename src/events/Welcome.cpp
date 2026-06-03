@@ -16,6 +16,7 @@ public:
                     newM.get_user()->global_name,
                     ev.updating_guild.id,
                     oldMRes.get_error().message);
+
                 co_return;
             };
 
@@ -23,6 +24,18 @@ public:
 
             if (newM.has_completed_onboarding() && !oldM.has_completed_onboarding()) {
                 log::info("User {} has completed onboarding!", newM.get_user()->global_name);
+
+                bot.direct_message_create(
+                    newM.user_id,
+                    message::dm::welcome());
+
+                auto channelRes = co_await bot.co_channel_get(server::welcomeChannel);
+                if (channelRes.is_error()) {
+                    log::error("Failed to fetch welcome channel: {}", channelRes.get_error().message);
+                    co_return;
+                };
+
+                auto channel = channelRes.get<dpp::channel>();
             };
 
             co_return;

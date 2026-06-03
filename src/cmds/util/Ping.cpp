@@ -25,7 +25,7 @@ public:
         auto res = co_await ev.co_reply(dpp::message(":ping_pong:"));
         if (res.is_error()) {
             log::error("Failed to send ping message: {}", res.get_error().message);
-            ev.reply(
+            co_await ev.co_reply(
                 dpp::message()
                     .add_embed(
                         dpp::embed()

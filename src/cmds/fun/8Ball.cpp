@@ -52,7 +52,7 @@ public:
         auto const q = std::get<std::string>(ev.get_parameter("question"));
         log::trace("Asked the 8-ball: {}", q);
 
-        ev.reply(
+        co_await ev.co_reply(
             dpp::message()
                 .add_embed(
                     dpp::embed()

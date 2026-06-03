@@ -1,8 +1,4 @@
 cmake_minimum_required(VERSION 3.22)
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 23
-    CXX_STANDARD_REQUIRED ON
-)
 project(CubicDiscord VERSION 1.0.0 LANGUAGES CXX)
 
 include(cmake/CPM.cmake)
@@ -28,3 +24,8 @@ if(CUBIC_LOCAL_BUILD)
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE src)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    CXX_STANDARD 23
+    CXX_STANDARD_REQUIRED ON
+)
