@@ -18,23 +18,26 @@ jobs:
               with:
                   vcpkgGitCommitId: "56bb2411609227288b70117ead2c47585ba07713"
                   vcpkgDirectory: "${{ github.workspace }}/vcpkg"
+
+            - name: Cache vcpkg artifacts
+              uses: actions/cache@v5
+              with:
+                  path: |
+                      ${{ github.workspace }}/vcpkg/packages
+                      ${{ github.workspace }}/vcpkg/downloads
+                      ${{ github.workspace }}/build/vcpkg_installed
+                  key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+                  restore-keys: |
+                      vcpkg-${{ runner.os }}-
+
             - name: Configure CMake
-              run: "cmake -B build -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64-linux"
+              run: "cmake -B build -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release"
               env:
                   CC: clang
                   CXX: clang++
 
             - name: Build
               run: cmake --build build --config Release -j$(nproc)
-
-            # i have no idea how else to get the runtime libs :(
-            - name: Collect runtime libraries
-              run: |
-                  ls -l vcpkg/packages/*_x64-linux/lib || true
-                  ldd build/CubicDiscord
-                  mkdir -p artifacts/libs
-                  cp vcpkg/packages/*_x64-linux/lib/*.so* artifacts/libs/ || true
-                  ls -l artifacts/libs || true
 
             - uses: actions/upload-artifact@v7
               with:

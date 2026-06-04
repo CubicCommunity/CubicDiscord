@@ -3,7 +3,8 @@
     "version-string": "1.0.0",
     "dependencies": [
         "dpp",
-        "openssl"
+        "openssl",
+        "re2"
     ],
     "builtin-baseline": "56bb2411609227288b70117ead2c47585ba07713"
 }

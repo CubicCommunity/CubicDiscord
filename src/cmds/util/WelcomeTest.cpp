@@ -37,7 +37,7 @@ public:
             co_return;
         };
 
-        ev.reply(
+        co_await ev.co_reply(
             dpp::message()
                 .add_embed(
                     dpp::embed()

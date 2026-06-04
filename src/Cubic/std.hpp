@@ -9,6 +9,8 @@
 #include <cstring>
 #include <cstdint>
 
+#include <re2/re2.h>
+
 #include <asp/fs.hpp>
 #include <asp/iter.hpp>
 #include <asp/time.hpp>
