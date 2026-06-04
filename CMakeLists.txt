@@ -15,6 +15,14 @@ if(CUBIC_LOCAL_BUILD)
         dpp::dpp
     )
 else() # for ci
+    CPMAddPackage("gh:cisco/mlspp#v0.1.0")
+    CPMAddPackage("gh:cisco/hpke#v0.1.0")
+    CPMAddPackage("gh:cisco/tls-syntax#v0.1.0")
+    CPMAddPackage("gh:cisco/bytes#v0.1.0")
+    CPMAddPackage("gh:cisco/mls-vectors#v0.1.0")
+
+    set(DPP_BUILD_MLS ON CACHE BOOL "" FORCE)
+
     CPMAddPackage("gh:brainboxdotcc/DPP#v10.1.4")
     target_link_libraries(${PROJECT_NAME} PRIVATE
         dpp
