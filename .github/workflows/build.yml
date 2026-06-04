@@ -21,7 +21,7 @@ jobs:
                   vcpkgDirectory: "${{ github.workspace }}/vcpkg"
 
             - name: Install static GCC runtime
-              run: sudo apt-get update && sudo apt-get install -y gcc-multilib g++-multilib
+              run: sudo apt-get update && sudo apt-get install -y libgcc-12-dev
 
             - name: Restore vcpkg cache
               uses: actions/cache/restore@v5
