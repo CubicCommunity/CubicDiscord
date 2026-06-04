@@ -15,6 +15,9 @@ if(CUBIC_LOCAL_BUILD)
         dpp::dpp
     )
 else() # for ci
+    set(MLS_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(MLS_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+
     CPMAddPackage("gh:cisco/mlspp#v0.1.0")
     CPMAddPackage("gh:cisco/hpke#v0.1.0")
     CPMAddPackage("gh:cisco/tls-syntax#v0.1.0")
