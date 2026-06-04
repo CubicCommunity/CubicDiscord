@@ -9,18 +9,28 @@ include(cmake/CPM.cmake)
 option(CUBIC_LOCAL_BUILD "Enable local testing mode" OFF)
 if(CUBIC_LOCAL_BUILD)
     target_compile_definitions(${PROJECT_NAME} PRIVATE CUBIC_LOCAL_BUILD=1)
-else()
+    find_package(dpp CONFIG REQUIRED)
+
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        dpp::dpp
+    )
+else() # for ci
+    CPMAddPackage("gh:brainboxdotcc/DPP#master")
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        dpp
+    )
+
     target_link_options(${PROJECT_NAME} PRIVATE
         -static
+        -static-libgcc
+        -static-libstdc++
     )
 endif()
 
-find_package(dpp CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(re2 CONFIG REQUIRED)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    dpp::dpp
     OpenSSL::SSL
     OpenSSL::Crypto
     re2::re2
