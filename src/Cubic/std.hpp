@@ -6,6 +6,7 @@
 #include <array>
 #include <random>
 
+#include <cmath>
 #include <cstring>
 #include <cstdint>
 
