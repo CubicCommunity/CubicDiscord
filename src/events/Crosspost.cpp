@@ -19,6 +19,8 @@ public:
         bot.on_message_create([this, &bot](dpp::message_create_t const& ev) -> dpp::task<void> {
             dpp::message const& msg = ev.msg;
 
+            if (!(string::startsWith(msg.content, "<@!") || string::startsWith(msg.content, "<#"))) co_return;
+
             if (msg.author.id == bot.me.id) co_return;
             if (std::find(crosspostingChannels.begin(), crosspostingChannels.end(), msg.channel_id) == crosspostingChannels.end()) co_return;
 

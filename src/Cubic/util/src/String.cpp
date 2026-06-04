@@ -24,10 +24,19 @@ std::string doJoin(std::span<T const> strs, std::string_view separator) {
     return res;
 };
 
-std::string util::string::join(std::span<std::string const> strs, std::string_view separator) {
+std::string string::join(std::span<std::string const> strs, std::string_view separator) {
     return doJoin<std::string>(strs, separator);
 };
 
-std::string util::string::join(std::span<std::string_view const> strs, std::string_view separator) {
+std::string string::join(std::span<std::string_view const> strs, std::string_view separator) {
     return doJoin<std::string_view>(strs, separator);
+};
+
+bool string::startsWith(std::string_view str, std::string_view prefix) {
+    return str.rfind(prefix, 0) == 0;
+};
+
+bool string::endsWith(std::string_view str, std::string_view suffix) {
+    if (suffix.size() > str.size()) return false;
+    return std::equal(suffix.rbegin(), suffix.rend(), str.rbegin());
 };
