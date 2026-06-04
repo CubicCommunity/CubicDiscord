@@ -14,39 +14,39 @@ class CrosspostEvent final : public base::EventHandler {
 private:
     dpp::webhook m_webhook = dpp::webhook(env::get("CROSSPOST_WEBHOOK").value_or(""));
 
+    std::string getContent(dpp::message const& msg) {
+        auto strs = asp::iter::split(msg.content, " ")
+                        .mapCast<std::string>()
+                        .collect();
+        strs.erase(strs.begin());
+
+        return string::join(std::move(strs), " ");
+    };
+
 public:
     void init(dpp::cluster& bot) override {
         bot.on_message_create([this, &bot](dpp::message_create_t const& ev) -> dpp::task<void> {
             dpp::message const& msg = ev.msg;
 
-            if (!(string::startsWith(msg.content, "<@!") || string::startsWith(msg.content, "<#"))) co_return;
-
             if (msg.author.id == bot.me.id) co_return;
             if (std::find(crosspostingChannels.begin(), crosspostingChannels.end(), msg.channel_id) == crosspostingChannels.end()) co_return;
 
-            auto chnlMentions = message::extractChannels(msg.content);
+            if (string::startsWith(msg.content, "<@!") || string::startsWith(msg.content, "<#")) {
+                auto chnlMentions = message::extractChannels(msg.content);
 
-            auto const content = [&msg]() {
-                auto strs = asp::iter::split(msg.content, " ")
-                                .mapCast<std::string>()
-                                .collect();
-                strs.erase(strs.begin());
+                if (!chnlMentions.empty()) {
+                    auto channel = chnlMentions.front();
+                    auto const m = dpp::message(channel, getContent(msg));
 
-                return string::join(std::move(strs), " ");
-            };
+                    co_await bot.co_message_create(m);
+                } else if (!msg.mentions.empty()) {
+                    auto user = msg.mentions.front().second.user_id;
+                    auto const dm = dpp::message(getContent(msg));
 
-            if (!chnlMentions.empty()) {
-                auto channel = chnlMentions.front();
-                auto const m = dpp::message(channel, content());
-
-                co_await bot.co_message_create(m);
-            } else if (!msg.mentions.empty()) {
-                auto user = msg.mentions.front().second.user_id;
-                auto const dm = dpp::message(content());
-
-                co_await bot.co_direct_message_create(user, dm);
+                    co_await bot.co_direct_message_create(user, dm);
+                };
             } else {
-                auto const m = dpp::message(content());
+                auto const m = dpp::message(getContent(msg));
                 co_await bot.co_execute_webhook(m_webhook, m);
             };
         });
