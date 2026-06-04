@@ -19,6 +19,9 @@ jobs:
                   vcpkgGitCommitId: "56bb2411609227288b70117ead2c47585ba07713"
                   vcpkgDirectory: "${{ github.workspace }}/vcpkg"
 
+            - name: Install static GCC runtime
+              run: sudo apt-get update && sudo apt-get install -y gcc-multilib g++-multilib
+
             - name: Cache vcpkg artifacts
               uses: actions/cache@v5
               with:

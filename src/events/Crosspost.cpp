@@ -14,7 +14,7 @@ class CrosspostEvent final : public base::EventHandler {
 private:
     dpp::webhook m_webhook = dpp::webhook(env::get("CROSSPOST_WEBHOOK").value_or(""));
 
-    std::string getContent(dpp::message const& msg) {
+    std::string getContent(dpp::message const& msg) const {
         auto strs = asp::iter::split(msg.content, " ")
                         .mapCast<std::string>()
                         .collect();
@@ -31,22 +31,32 @@ public:
             if (msg.author.id == bot.me.id) co_return;
             if (std::find(crosspostingChannels.begin(), crosspostingChannels.end(), msg.channel_id) == crosspostingChannels.end()) co_return;
 
-            if (string::startsWith(msg.content, "<@!") || string::startsWith(msg.content, "<#")) {
+            if (string::startsWith(msg.content, "<@") || string::startsWith(msg.content, "<#")) {
+                log::debug("Scanning crosspost message by #{} ({})", msg.author.username, msg.author.id);
+
                 auto chnlMentions = message::extractChannels(msg.content);
 
                 if (!chnlMentions.empty()) {
                     auto channel = chnlMentions.front();
                     auto const m = dpp::message(channel, getContent(msg));
 
+                    log::info("Crosspost message by #{} ({}) contains mention for channel of ID {}", msg.author.username, msg.author.id, channel);
+
                     co_await bot.co_message_create(m);
                 } else if (!msg.mentions.empty()) {
                     auto user = msg.mentions.front().second.user_id;
                     auto const dm = dpp::message(getContent(msg));
 
+                    log::info("Crosspost message by #{} ({}) contains mention for user of ID {}", msg.author.username, msg.author.id, user);
+
                     co_await bot.co_direct_message_create(user, dm);
+                } else {
+                    log::error("Crosspost message by #{} ({}) contained no mentions", msg.author.username, msg.author.id);
                 };
             } else {
-                auto const m = dpp::message(getContent(msg));
+                log::warn("Crosspost message by @{} ({}) contains no mention at first argument", msg.author.username, msg.author.id);
+
+                auto const m = dpp::message(msg.content);
                 co_await bot.co_execute_webhook(m_webhook, m);
             };
         });
