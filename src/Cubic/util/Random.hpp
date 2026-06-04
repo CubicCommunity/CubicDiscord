@@ -223,7 +223,7 @@ namespace cubic {
              * @param precision The amount of decimal places to account for
              */
             inline float pc(uint8_t precision = 2) {
-                auto factor = std::powf(10.f, precision);
+                auto factor = std::pow(10.f, precision);
                 return std::round(get(1.f) * factor) / factor;
             };
         };
