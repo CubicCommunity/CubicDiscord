@@ -15,7 +15,7 @@ if(CUBIC_LOCAL_BUILD)
         dpp::dpp
     )
 else() # for ci
-    CPMAddPackage("gh:brainboxdotcc/DPP#master")
+    CPMAddPackage("gh:brainboxdotcc/DPP#v10.1.4")
     target_link_libraries(${PROJECT_NAME} PRIVATE
         dpp
     )
