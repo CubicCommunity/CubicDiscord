@@ -15,17 +15,6 @@ if(CUBIC_LOCAL_BUILD)
         dpp::dpp
     )
 else() # for ci
-    set(MLS_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-    set(MLS_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-
-    CPMAddPackage("gh:cisco/mlspp#v0.1.0")
-    CPMAddPackage("gh:cisco/hpke#v0.1.0")
-    CPMAddPackage("gh:cisco/tls-syntax#v0.1.0")
-    CPMAddPackage("gh:cisco/bytes#v0.1.0")
-    CPMAddPackage("gh:cisco/mls-vectors#v0.1.0")
-
-    set(DPP_BUILD_MLS ON CACHE BOOL "" FORCE)
-
     CPMAddPackage("gh:brainboxdotcc/DPP#v10.1.4")
     target_link_libraries(${PROJECT_NAME} PRIVATE
         dpp
@@ -38,12 +27,9 @@ else() # for ci
     )
 endif()
 
-find_package(OpenSSL REQUIRED)
 find_package(re2 CONFIG REQUIRED)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    OpenSSL::SSL
-    OpenSSL::Crypto
     re2::re2
 )
 

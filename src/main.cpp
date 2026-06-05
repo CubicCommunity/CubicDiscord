@@ -1,12 +1,6 @@
 #include <Cubic/Cubic.h>
 
-#include <openssl/bn.h>
-
 using namespace cubic::prelude;
-
-void dpp::bignumber::bn_deleter::operator()(struct dpp::openssl_bignum* bn) const noexcept {
-    if (bn) BN_free(reinterpret_cast<BIGNUM*>(bn));
-};
 
 int main() {
     auto& bot = Bot::get();
