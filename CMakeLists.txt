@@ -9,17 +9,7 @@ include(cmake/CPM.cmake)
 option(CUBIC_LOCAL_BUILD "Enable local testing mode" OFF)
 if(CUBIC_LOCAL_BUILD)
     target_compile_definitions(${PROJECT_NAME} PRIVATE CUBIC_LOCAL_BUILD=1)
-    find_package(dpp CONFIG REQUIRED)
-
-    target_link_libraries(${PROJECT_NAME} PRIVATE
-        dpp::dpp
-    )
 else() # for ci
-    CPMAddPackage("gh:brainboxdotcc/DPP#v10.1.5")
-    target_link_libraries(${PROJECT_NAME} PRIVATE
-        dpp
-    )
-
     target_link_options(${PROJECT_NAME} PRIVATE
         -static
         -static-libgcc
@@ -27,10 +17,12 @@ else() # for ci
     )
 endif()
 
+find_package(dpp CONFIG REQUIRED)
 find_package(re2 CONFIG REQUIRED)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     re2::re2
+    dpp::dpp
 )
 
 CPMAddPackage("gh:dankmeme01/asp2#main")

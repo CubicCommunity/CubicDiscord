@@ -1,4 +1,4 @@
-name: Build Source
+name: Build Cubic Discord Bot
 
 on:
     push:
@@ -7,12 +7,12 @@ on:
 
 jobs:
     build:
-        name: "Build"
+        name: "Compile Source"
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v6
 
-            - uses: lukka/get-cmake@v4.3.2
+            - uses: lukka/get-cmake@v4.3.3
 
             - name: Setup vcpkg
               uses: lukka/run-vcpkg@v11
@@ -39,6 +39,15 @@ jobs:
 
             - name: Build
               run: cmake --build build --config Release -j$(nproc)
+
+            # i have no idea how else to get the runtime libs :(
+            - name: Collect runtime libraries
+              run: |
+                  ls -l vcpkg/packages/*_x64-linux/lib || true
+                  ldd build/CubicDiscord
+                  mkdir -p artifacts/libs
+                  cp vcpkg/packages/*_x64-linux/lib/*.so* artifacts/libs/ || true
+                  ls -l artifacts/libs || true
 
             - name: Save vcpkg cache
               if: always()
@@ -80,7 +89,7 @@ jobs:
             - name: Publish Nightly release
               id: publish-nightly
               if: ${{ github.ref_name == github.event.repository.default_branch }}
-              uses: andelf/nightly-release@main
+              uses: andelf/nightly-release@v1
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
