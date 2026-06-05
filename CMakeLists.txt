@@ -13,10 +13,12 @@ endif()
 
 find_package(dpp CONFIG REQUIRED)
 find_package(re2 CONFIG REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     re2::re2
     dpp::dpp
+    OpenSSL::SSL OpenSSL::Crypto
 )
 
 CPMAddPackage("gh:dankmeme01/asp2#main")
