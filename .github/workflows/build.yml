@@ -17,8 +17,19 @@ jobs:
             - name: Setup vcpkg
               uses: lukka/run-vcpkg@v11
               with:
-                  vcpkgGitCommitId: "56bb2411609227288b70117ead2c47585ba07713"
+                  vcpkgGitCommitId: "f3e10653cc27d62a37a3763cd84b38bca07c6075"
                   vcpkgDirectory: "${{ github.workspace }}/vcpkg"
+
+            - name: Restore vcpkg cache
+              uses: actions/cache/restore@v5
+              with:
+                  path: |
+                      ${{ github.workspace }}/vcpkg/packages
+                      ${{ github.workspace }}/vcpkg/downloads
+                      ${{ github.workspace }}/build/vcpkg_installed
+                  key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+                  restore-keys: |
+                      vcpkg-${{ runner.os }}-
 
             - name: Configure CMake
               run: "cmake -B build -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DVCPKG_TARGET_TRIPLET=x64-linux -DBUILD_SHARED_LIBS=OFF"
@@ -28,6 +39,16 @@ jobs:
 
             - name: Build
               run: cmake --build build --config Release -j$(nproc)
+
+            - name: Save vcpkg cache
+              if: always()
+              uses: actions/cache/save@v5
+              with:
+                  path: |
+                      ${{ github.workspace }}/vcpkg/packages
+                      ${{ github.workspace }}/vcpkg/downloads
+                      ${{ github.workspace }}/build/vcpkg_installed
+                  key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
 
             - uses: actions/upload-artifact@v7
               with:
