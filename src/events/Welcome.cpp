@@ -2,6 +2,14 @@
 
 using namespace cubic::prelude;
 
+#ifdef CUBIC_LOCAL_BUILD
+#define CUBIC_WELCOME_SNOWFLAKE 1512802838026260602
+#else
+#define CUBIC_WELCOME_SNOWFLAKE 1412493998790021171
+#endif
+
+static constexpr dpp::snowflake g_welcomeChannel = CUBIC_WELCOME_SNOWFLAKE;
+
 class WelcomeEvent final : public base::EventHandler {
 public:
     void init(dpp::cluster& bot) override {
@@ -36,15 +44,7 @@ public:
                     co_return;
                 };
 
-                auto channelRes = co_await bot.co_channel_get(server::welcomeChannel);
-                if (channelRes.is_error()) {
-                    log::error("Failed to fetch welcome channel: {}", channelRes.get_error().message);
-                    co_return;
-                };
-
-                auto channel = channelRes.get<dpp::channel>();
-
-                auto msgRes = co_await bot.co_message_create(dpp::message(channel.id, fmt::format("Welcome to Cubic Studios's community server, {}! Please check your DMs for important information about the server and its channels.", newM.get_user()->global_name)));
+                auto msgRes = co_await bot.co_message_create(dpp::message(g_welcomeChannel, fmt::format("Welcome to Cubic Studios's community server, {}! Please check your DMs for important information about the server and its channels.", newM.get_user()->global_name)));
                 if (msgRes.is_error()) {
                     log::error("Failed to send welcome message to '{}': {}", newM.get_user()->global_name, msgRes.get_error().message);
                     co_return;

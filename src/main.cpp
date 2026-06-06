@@ -42,9 +42,9 @@ int main() {
             wh.avatar_url = getAvatarURL();
 
 #ifdef CUBIC_LOCAL_BUILD
-#define AVATAR_FORMAT dpp::i_png
+#define CUBIC_AVATAR_FORMAT dpp::i_png
 #else  // the test bot's avatar isn't animated lol
-#define AVATAR_FORMAT dpp::i_gif
+#define CUBIC_AVATAR_FORMAT dpp::i_gif
 #endif
 
             co_await ev.owner->co_execute_webhook(
@@ -55,7 +55,7 @@ int main() {
                             .set_author("Service Status", "", "")
                             .set_description(fmt::format(":white_check_mark: **{}** is now __online__", getUsername()))
                             .set_color(theme::colors::primary)
-                            .set_footer(getUsername(), getAvatarURL(AVATAR_FORMAT))));
+                            .set_footer(getUsername(), getAvatarURL(CUBIC_AVATAR_FORMAT))));
         };
 
         co_return;

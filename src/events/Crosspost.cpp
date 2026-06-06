@@ -2,13 +2,13 @@
 
 using namespace cubic::prelude;
 
-static constexpr auto crosspostingChannels = std::to_array<dpp::snowflake>({
 #ifdef CUBIC_LOCAL_BUILD
-    1412493998790021171,
+#define CUBIC_CROSSPOST_SNOWFLAKE 1412493998790021171
 #else
-    942554670201720852,
+#define CUBIC_CROSSPOST_SNOWFLAKE 942554670201720852
 #endif
-});
+
+static constexpr dpp::snowflake g_crosspostingChannel = CUBIC_CROSSPOST_SNOWFLAKE;
 
 class CrosspostEvent final : public base::EventHandler {
 private:
@@ -29,7 +29,7 @@ public:
             dpp::message const& msg = ev.msg;
 
             if (msg.author.id == bot.me.id) co_return;
-            if (std::find(crosspostingChannels.begin(), crosspostingChannels.end(), msg.channel_id) == crosspostingChannels.end()) co_return;
+            if (ev.msg.channel_id != g_crosspostingChannel) co_return;
 
             if (string::startsWith(msg.content, "<@") || string::startsWith(msg.content, "<#")) {
                 log::debug("Scanning crosspost message by #{} ({})", msg.author.username, msg.author.id);

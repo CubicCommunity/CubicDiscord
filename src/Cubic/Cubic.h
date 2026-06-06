@@ -36,10 +36,8 @@ namespace cubic {
     namespace server {
 #ifdef CUBIC_LOCAL_BUILD
         inline constexpr dpp::snowflake id = 1330925786634522787;
-        inline constexpr dpp::snowflake welcomeChannel = 1511704877481332806;
 #else
         inline constexpr dpp::snowflake id = 460081436637134859;
-        inline constexpr dpp::snowflake welcomeChannel = 1412493998790021171;
 #endif
     };
 
