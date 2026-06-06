@@ -20,7 +20,7 @@ jobs:
                   vcpkgGitCommitId: "f3e10653cc27d62a37a3763cd84b38bca07c6075"
                   vcpkgDirectory: "${{ github.workspace }}/vcpkg"
 
-            - name: Restore vcpkg cache
+            - name: Use vcpkg cache
               uses: actions/cache/restore@v5
               with:
                   path: |
@@ -48,16 +48,6 @@ jobs:
                   mkdir -p artifacts/libs
                   cp vcpkg/packages/*_x64-linux/lib/*.so* artifacts/libs/ || true
                   ls -l artifacts/libs || true
-
-            - name: Save vcpkg cache
-              if: ${{ runner.os == 'Linux' && github.job == 'build' }}
-              uses: actions/cache/save@v5
-              with:
-                  path: |
-                      ${{ github.workspace }}/vcpkg/packages
-                      ${{ github.workspace }}/vcpkg/downloads
-                      ${{ github.workspace }}/build/vcpkg_installed
-                  key: vcpkg-${{ runner.os }}-${{ github.job }}-${{ hashFiles('vcpkg.json') }}
 
             - uses: actions/upload-artifact@v7
               with:
