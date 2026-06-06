@@ -13,20 +13,52 @@ int main() {
     log::debug("Bot is running on production build.");
 #endif
 
-    bot.on_slashcommand([](dpp::slashcommand_t const& event) -> dpp::task<void> {
-        if (auto cm = CommandManager::get()) co_await cm->handleCommand(event);
+    bot.on_slashcommand([](dpp::slashcommand_t const& ev) -> dpp::task<void> {
+        if (auto cm = CommandManager::get()) co_await cm->handleCommand(ev);
         co_return;
     });
 
-    bot.on_ready([](const dpp::ready_t& event) {
-        log::debug("Ready event called");
+    bot.on_ready([&bot](dpp::ready_t const& ev) -> dpp::task<void> {
+        log::trace("Ready event called");
 
         if (dpp::run_once<struct register_bot_commands>()) {
-            log::info("Registering all commands");
-            if (auto cm = CommandManager::get()) cm->registerAll(server::id);
+            auto const getUsername = [&bot, &ev]() {
+                auto evName = ev.owner->me.username;
+                return evName.empty() ? bot.me.username : std::move(evName);
+            };
 
-            for (auto const& ev : base::EventHandler::getAll()) ev->init(Bot::get());
+            auto const getAvatarURL = [&bot, &ev](dpp::image_type format = dpp::i_png) {
+                auto evUrl = ev.owner->me.get_avatar_url(512, format);
+                return evUrl.empty() ? bot.me.get_avatar_url(512, format) : std::move(evUrl);
+            };
+
+            log::info("Registering all commands");
+            if (auto cm = CommandManager::get()) cm->registerAll(*ev.owner, server::id);
+
+            log::info("Initializing all event listeners");
+            for (auto const& e : base::EventHandler::getAll()) e->init(*ev.owner);
+
+            auto wh = Bot::getDevWebhook();
+            wh.avatar_url = getAvatarURL();
+
+#ifdef CUBIC_LOCAL_BUILD
+#define AVATAR_FORMAT dpp::i_png
+#else  // the test bot's avatar isn't animated lol
+#define AVATAR_FORMAT dpp::i_gif
+#endif
+
+            co_await ev.owner->co_execute_webhook(
+                wh,
+                dpp::message()
+                    .add_embed(
+                        dpp::embed()
+                            .set_author("Service Status", "", "")
+                            .set_description(fmt::format(":white_check_mark: **{}** is now __online__", getUsername()))
+                            .set_color(theme::colors::primary)
+                            .set_footer(getUsername(), getAvatarURL(AVATAR_FORMAT))));
         };
+
+        co_return;
     });
 
     bot.start(dpp::st_wait);

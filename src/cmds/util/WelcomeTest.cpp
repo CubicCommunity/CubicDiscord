@@ -41,8 +41,7 @@ public:
             dpp::message()
                 .add_embed(
                     dpp::embed()
-                        .set_title("Welcome DM Sent")
-                        .set_description("The welcome DM has been sent to your DMs.")
+                        .set_description(":white_check_mark: The test welcome DM has been sent.")
                         .set_color(theme::colors::primary)));
 
         co_return;

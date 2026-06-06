@@ -40,7 +40,7 @@ public:
 
         log::debug("Ping command latency: {}ms", dur);
 
-        ev.edit_original_response(
+        co_await ev.co_edit_original_response(
             dpp::message()
                 .add_embed(
                     dpp::embed()

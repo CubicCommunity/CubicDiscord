@@ -11,7 +11,7 @@ namespace cubic {
             StringMap<base::Command*> m_commands;
 
         public:
-            void registerAll(dpp::snowflake server);
+            void registerAll(dpp::cluster& bot, dpp::snowflake server);
 
             dpp::task<void> handleCommand(dpp::slashcommand_t const& event);
         };

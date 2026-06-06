@@ -6,7 +6,7 @@
 
 using namespace cubic::prelude;
 
-void CommandManager::registerAll(dpp::snowflake server) {
+void CommandManager::registerAll(dpp::cluster& bot, dpp::snowflake server) {
     auto& cmds = base::Command::getAll();
     if (cmds.empty()) return log::critical("No commands found");
 
@@ -30,7 +30,7 @@ void CommandManager::registerAll(dpp::snowflake server) {
 
     log::debug("Bulk registering {} commands to Discord...", commands.size());
 
-    Bot::get().guild_bulk_command_create(commands, server);
+    bot.guild_bulk_command_create(commands, server);
 
     log::info("Command registration finished");
 };
@@ -50,7 +50,7 @@ dpp::task<void> CommandManager::handleCommand(dpp::slashcommand_t const& event) 
                 co_await cmd->handle(event);
             } else {
                 log::error("Command '{}' is null", name);
-                event.reply(
+                co_await event.co_reply(
                     dpp::message()
                         .add_embed(
                             dpp::embed()
@@ -59,7 +59,7 @@ dpp::task<void> CommandManager::handleCommand(dpp::slashcommand_t const& event) 
             };
         } else {
             log::error("Failed to find slash command '{}'", name);
-            event.reply(
+            co_await event.co_reply(
                 dpp::message()
                     .add_embed(
                         dpp::embed()
@@ -68,7 +68,7 @@ dpp::task<void> CommandManager::handleCommand(dpp::slashcommand_t const& event) 
         };
     } else {
         log::error("Interaction '{}' is not a slash command", name);
-        event.reply(
+        co_await event.co_reply(
             dpp::message()
                 .add_embed(
                     dpp::embed()
