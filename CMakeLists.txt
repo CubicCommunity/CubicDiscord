@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.22)
 project(CubicDiscord VERSION 1.0.0 LANGUAGES CXX)
 
+set(VCPKG_BUILD_TYPE release)
+
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 add_executable(${PROJECT_NAME} ${SOURCES})
 
@@ -16,8 +18,8 @@ find_package(re2 CONFIG REQUIRED)
 find_package(OpenSSL REQUIRED)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
-    re2::re2
     dpp::dpp
+    re2::re2
     OpenSSL::SSL OpenSSL::Crypto
 )
 
