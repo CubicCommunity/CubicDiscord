@@ -6,6 +6,30 @@ int main() {
     auto& bot = Bot::get();
 
     bot.on_log(dpp::utility::cout_logger());
+    bot.on_log([](dpp::log_t const& ev) {
+        if (ev.owner && ev.severity >= dpp::loglevel::ll_error) {
+            auto now = asp::SystemTime::now().timeSinceEpoch().seconds();
+
+            auto web = Bot::getDevWebhook();
+            web.avatar_url = ev.owner->me.get_avatar_url(512);
+
+            ev.owner->execute_webhook(
+                web,
+                dpp::message()
+                    .add_embed(
+                        dpp::embed()
+                            .set_author("Shard Error", "", "")
+                            .set_description(fmt::format("```{}```", ev.message))
+                            .set_color(theme::colors::secondary)
+                            .add_field(
+                                "Shard",
+                                fmt::format("**`{}`**", ev.shard))
+                            .add_field(
+                                "Time of Error",
+                                fmt::format("<t:{}:F> • <t:{}:R>", now, now))
+                            .set_footer(ev.owner->me.username, web.avatar_url = ev.owner->me.get_avatar_url(512, CUBIC_AVATAR_FORMAT))));
+        };
+    });
 
 #ifdef CUBIC_LOCAL_BUILD
     log::warn("Bot is running on local test build.");
@@ -32,23 +56,19 @@ int main() {
                 return evUrl.empty() ? bot.me.get_avatar_url(512, format) : std::move(evUrl);
             };
 
-            log::info("Registering all commands");
+            log::debug("Registering all commands");
             if (auto cm = CommandManager::get()) cm->registerAll(*ev.owner, server::id);
 
-            log::info("Initializing all event listeners");
+            log::debug("Initializing all event listeners");
             for (auto const& e : base::EventHandler::getAll()) e->init(*ev.owner);
 
-            auto wh = Bot::getDevWebhook();
-            wh.avatar_url = getAvatarURL();
+            log::info("Cubic bot operating under {} is now online!", ev.owner->me.format_username());
 
-#ifdef CUBIC_LOCAL_BUILD
-#define CUBIC_AVATAR_FORMAT dpp::i_png
-#else  // the test bot's avatar isn't animated lol
-#define CUBIC_AVATAR_FORMAT dpp::i_gif
-#endif
+            auto web = Bot::getDevWebhook();
+            web.avatar_url = getAvatarURL();
 
             co_await ev.owner->co_execute_webhook(
-                wh,
+                web,
                 dpp::message()
                     .add_embed(
                         dpp::embed()

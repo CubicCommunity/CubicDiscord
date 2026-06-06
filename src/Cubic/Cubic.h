@@ -5,10 +5,17 @@
 #include <fmt/core.h>
 
 #include <Cubic/std.hpp>
+#include <Cubic/Version.h>
 
 #include <Cubic/base/Include.h>
 #include <Cubic/cluster/Include.h>
 #include <Cubic/util/Include.h>
+
+#ifdef CUBIC_LOCAL_BUILD
+#define CUBIC_AVATAR_FORMAT dpp::i_webp
+#else  // the test bot's avatar isn't animated lol
+#define CUBIC_AVATAR_FORMAT dpp::i_gif
+#endif
 
 namespace cubic {
     namespace fs = asp::fs;
