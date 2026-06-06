@@ -27,7 +27,7 @@ jobs:
                       ${{ github.workspace }}/vcpkg/packages
                       ${{ github.workspace }}/vcpkg/downloads
                       ${{ github.workspace }}/build/vcpkg_installed
-                  key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+                  key: vcpkg-${{ runner.os }}-${{ github.job }}-${{ hashFiles('vcpkg.json') }}
                   restore-keys: |
                       vcpkg-${{ runner.os }}-
 
@@ -50,14 +50,14 @@ jobs:
                   ls -l artifacts/libs || true
 
             - name: Save vcpkg cache
-              if: always()
+              if: ${{ runner.os == 'Linux' && github.job == 'build' }}
               uses: actions/cache/save@v5
               with:
                   path: |
                       ${{ github.workspace }}/vcpkg/packages
                       ${{ github.workspace }}/vcpkg/downloads
                       ${{ github.workspace }}/build/vcpkg_installed
-                  key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+                  key: vcpkg-${{ runner.os }}-${{ github.job }}-${{ hashFiles('vcpkg.json') }}
 
             - uses: actions/upload-artifact@v7
               with:
