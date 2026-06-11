@@ -3,6 +3,9 @@
 using namespace cubic::prelude;
 
 static constexpr auto g_responses = std::to_array({
+    "hell nah twin",
+    "yas queen",
+    "idfk",
     "It is certain.",
     "It is decidedly so.",
     "Without a doubt.",
@@ -23,6 +26,11 @@ static constexpr auto g_responses = std::to_array({
     "My sources say no.",
     "Outlook not so good.",
     "Very doubtful.",
+    "Not a snowball's chance in hell.",
+    "When pigs fly.",
+    "If you believe hard enough!",
+    "Anything is possible.",
+    "Get Cubic's Discord server to 100,000 members and maybe I'll tell you!",
 });
 
 class EightBallCommand final : public base::Command {
@@ -34,7 +42,7 @@ public:
     dpp::slashcommand build() const override {
         return dpp::slashcommand()
             .set_name(name())
-            .set_description("Ask the magic 8-ball a question.")
+            .set_description("Ask the magic 8-ball a yes-or-no question.")
             .set_type(dpp::slashcommand_contextmenu_type::ctxm_chat_input)
             .set_interaction_contexts({
                 dpp::interaction_context_type::itc_bot_dm,
@@ -52,17 +60,19 @@ public:
         auto const q = std::get<std::string>(ev.get_parameter("question"));
         log::trace("Asked the 8-ball: {}", q);
 
-        co_await ev.co_reply(
+        co_await ev.co_edit_original_response(
             dpp::message()
                 .add_embed(
                     dpp::embed()
-                        .set_title("Magic 8-Ball")
+                        .set_title(":8ball: Magic 8-Ball")
                         .set_color(theme::colors::primary)
-                        .add_field("Question", q)
-                        .add_field("Answer", g_responses[random::get(g_responses.size() - 1)])));
+                        .add_field("Question", fmt::format("*{}*", q))
+                        .add_field("Answer", fmt::format("**{}**", g_responses[random::get(g_responses.size() - 1)]))));
 
         co_return;
     };
+
+    constexpr bool needsThinking() const noexcept override { return true; };
 };
 
 static EightBallCommand cmd;

@@ -18,7 +18,7 @@ public:
 
             auto newM = ev.updated;
 
-            auto oldMRes = co_await bot.co_guild_get_member(ev.updating_guild.id, newM.user_id);
+            auto const oldMRes = co_await bot.co_guild_get_member(ev.updating_guild.id, newM.user_id);
             if (oldMRes.is_error()) {
                 log::error("Failed to fetch old member data for '{}' in guild '{}': {}",
                     newM.get_user()->global_name,
@@ -28,12 +28,12 @@ public:
                 co_return;
             };
 
-            auto oldM = oldMRes.get<dpp::guild_member>();
+            auto const oldM = oldMRes.get<dpp::guild_member>();
 
             if (newM.has_completed_onboarding() && !oldM.has_completed_onboarding()) {
                 log::info("User {} has completed onboarding!", newM.get_user()->global_name);
 
-                auto dmRes = co_await bot.co_direct_message_create(
+                auto const dmRes = co_await bot.co_direct_message_create(
                     newM.user_id,
                     message::dm::welcome());
                 if (dmRes.is_error()) {
@@ -44,7 +44,7 @@ public:
                     co_return;
                 };
 
-                auto msgRes = co_await bot.co_message_create(dpp::message(g_welcomeChannel, fmt::format("Welcome to Cubic Studios's community server, {}! Please check your DMs for important information about the server and its channels.", newM.get_user()->global_name)));
+                auto const msgRes = co_await bot.co_message_create(dpp::message(g_welcomeChannel, fmt::format("Welcome to Cubic Studios's community server, {}! Please check your DMs for important information about the server and its channels.", newM.get_user()->global_name)));
                 if (msgRes.is_error()) {
                     log::error("Failed to send welcome message to '{}': {}", newM.get_user()->global_name, msgRes.get_error().message);
                     co_return;

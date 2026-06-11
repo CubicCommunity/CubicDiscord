@@ -15,6 +15,7 @@ namespace cubic {
             virtual dpp::slashcommand build() const = 0;
             virtual dpp::task<void> handle(dpp::slashcommand_t const& ev) = 0;
 
+            virtual constexpr bool needsThinking() const noexcept { return false; };
             virtual constexpr bool ephemeral() const noexcept { return false; };
 
             static std::vector<Command*>& getAll() {

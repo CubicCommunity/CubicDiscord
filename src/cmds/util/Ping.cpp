@@ -47,7 +47,7 @@ public:
                         .set_title("Ping")
                         .set_color(theme::colors::primary)
                         .add_field("Latency", fmt::format("{}ms", dur))
-                        .add_field("API Latency", fmt::format("{}ms", ev.owner->rest_ping / 1000.0))));
+                        .add_field("API Latency", fmt::format("{}ms", static_cast<uint64_t>(ev.owner->rest_ping * 1000.0)))));
 
         co_return;
     };

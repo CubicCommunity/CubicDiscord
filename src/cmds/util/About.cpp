@@ -27,6 +27,7 @@ public:
                 .add_embed(
                     dpp::embed()
                         .set_author("About", "", "")
+                        .set_thumbnail("https://avatars.githubusercontent.com/u/179986602")
                         .set_title(fmt::format("CubicDiscord `{}`", Version::get()->getVersionString()))
                         .set_description(fmt::format("Running as Discord bot client **`{}`**`#{}` (`{}`) on shard **#{}**", bot.me.username, bot.me.discriminator, bot.me.id, ev.shard))
                         .set_color(theme::colors::primary)

@@ -16,13 +16,13 @@ public:
         bot.on_message_create([&bot](dpp::message_create_t const& ev) -> dpp::task<void> {
             if (ev.msg.author.is_bot() || ev.msg.channel_id != g_introChannel) co_return;
 
-            auto msgsRes = co_await bot.co_messages_get(g_introChannel, 0, 0, 0, 100);
+            auto const msgsRes = co_await bot.co_messages_get(g_introChannel, 0, 0, 0, 100);
             if (msgsRes.is_error()) {
                 log::error("Failed to fetch messages from introductions channel: {}", msgsRes.get_error().message);
                 co_return;
             };
 
-            auto msgs = msgsRes.get<std::unordered_map<dpp::snowflake, dpp::message>>();
+            auto const msgs = msgsRes.get<std::unordered_map<dpp::snowflake, dpp::message>>();
 
             for (auto const& [sf, msg] : msgs) {
                 if (ev.msg.author.id == msg.author.id && ev.msg.id != msg.id) {

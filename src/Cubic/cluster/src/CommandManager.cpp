@@ -46,7 +46,7 @@ dpp::task<void> CommandManager::handleCommand(dpp::slashcommand_t const& event) 
             log::debug("Found slash command '{}'", name);
 
             if (auto cmd = it->second) {
-                event.thinking(cmd->ephemeral());
+                if (cmd->needsThinking()) co_await event.co_thinking(cmd->ephemeral());
                 co_await cmd->handle(event);
             } else {
                 log::error("Command '{}' is null", name);

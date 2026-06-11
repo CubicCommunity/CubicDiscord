@@ -26,7 +26,7 @@ private:
 public:
     void init(dpp::cluster& bot) override {
         bot.on_message_create([this, &bot](dpp::message_create_t const& ev) -> dpp::task<void> {
-            dpp::message const& msg = ev.msg;
+            auto const& msg = ev.msg;
 
             if (msg.author.id == bot.me.id) co_return;
             if (ev.msg.channel_id != g_crosspostingChannel) co_return;
@@ -34,8 +34,7 @@ public:
             if (string::startsWith(msg.content, "<@") || string::startsWith(msg.content, "<#")) {
                 log::debug("Scanning crosspost message by #{} ({})", msg.author.username, msg.author.id);
 
-                auto chnlMentions = message::extractChannels(msg.content);
-
+                auto const chnlMentions = message::extractChannels(msg.content);
                 if (!chnlMentions.empty()) {
                     auto channel = chnlMentions.front();
                     auto const m = dpp::message(channel, getContent(msg));
