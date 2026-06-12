@@ -53,41 +53,44 @@ namespace cubic {
             inline auto welcome() {
                 using namespace dpp;
 
-                auto embed = dpp::embed()
-                                 .set_title("Cubic Studios")
-                                 .set_description("Your home for entertainment.\n\nHello! Welcome to the official server of Cubic Studios. Thanks for coming by!\n\nStart hanging out with others at <#827884790140108830>!")
-                                 .set_thumbnail("https://i.imgur.com/5q75iQC.gif")
-                                 .set_color(theme::colors::primary);
+                auto const embed = dpp::embed()
+                                       .set_title("Welcome to Cubic Studios")
+                                       .set_description("Your home for entertainment.\n\nHello! Welcome to the official server of Cubic Studios, home of many awesome creative works! Thanks for coming by!")
+                                       .add_field(
+                                           "Meet the Community",
+                                           "Chat with others at <#827884790140108830>!")
+                                       .set_thumbnail("https://i.imgur.com/5q75iQC.gif")
+                                       .set_color(theme::colors::primary);
 
-                auto row = dpp::component()
-                               .set_type(cot_action_row)
-                               .add_component(
-                                   component()
-                                       .set_type(cot_button)
-                                       .set_label("Official Website")
-                                       .set_style(cos_link)
-                                       .set_url("https://www.cubicstudios.xyz/")
-                                       .set_emoji(
-                                           "code_block",
-                                           827868673548222465))
-                               .add_component(
-                                   component()
-                                       .set_type(cot_button)
-                                       .set_label("YouTube")
-                                       .set_style(cos_link)
-                                       .set_url("https://www.youtube.com/c/CubicCommunity")
-                                       .set_emoji(
-                                           "YouTube",
-                                           1408088493967671406))
-                               .add_component(
-                                   component()
-                                       .set_type(cot_button)
-                                       .set_label("X")
-                                       .set_style(cos_link)
-                                       .set_url("https://www.x.com/CubicCommunity/")
-                                       .set_emoji(
-                                           "X_",
-                                           1511731692627431585));
+                auto const row = dpp::component()
+                                     .set_type(cot_action_row)
+                                     .add_component(
+                                         component()
+                                             .set_type(cot_button)
+                                             .set_label("Official Website")
+                                             .set_style(cos_link)
+                                             .set_url("https://www.cubicstudios.xyz/")
+                                             .set_emoji(
+                                                 "code_block",
+                                                 827868673548222465))
+                                     .add_component(
+                                         component()
+                                             .set_type(cot_button)
+                                             .set_label("YouTube")
+                                             .set_style(cos_link)
+                                             .set_url("https://www.youtube.com/c/CubicCommunity")
+                                             .set_emoji(
+                                                 "YouTube",
+                                                 1408088493967671406))
+                                     .add_component(
+                                         component()
+                                             .set_type(cot_button)
+                                             .set_label("X")
+                                             .set_style(cos_link)
+                                             .set_url("https://www.x.com/CubicCommunity/")
+                                             .set_emoji(
+                                                 "X_",
+                                                 1511731692627431585));
 
                 return dpp::message()
                     .add_embed(embed)

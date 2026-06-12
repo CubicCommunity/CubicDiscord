@@ -25,7 +25,7 @@ namespace cubic {
         std::string const m_repository = "CubicCommunity/CubicDiscord";
 
     protected:
-        std::string getPlatformDomain() const noexcept;
+        constexpr const char* getPlatformDomain() const noexcept;
 
     public:
         static asp::Duration getUptime() noexcept;

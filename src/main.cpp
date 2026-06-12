@@ -34,7 +34,7 @@ int main() {
 #ifdef CUBIC_LOCAL_BUILD
     log::warn("Bot is running on local test build.");
 #else
-    log::debug("Bot is running on production build.");
+    log::info("Bot is running on production build.");
 #endif
 
     bot.on_slashcommand([](dpp::slashcommand_t const& ev) -> dpp::task<void> {

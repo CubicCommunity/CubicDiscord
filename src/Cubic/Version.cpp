@@ -6,7 +6,7 @@ using namespace cubic::prelude;
 
 asp::SystemTime const Version::s_uptime = asp::SystemTime::now();
 
-std::string Version::getPlatformDomain() const noexcept {
+constexpr const char* Version::getPlatformDomain() const noexcept {
     switch (m_platform) {
         default: [[fallthrough]];
 
