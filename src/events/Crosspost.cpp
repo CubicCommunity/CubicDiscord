@@ -15,10 +15,8 @@ private:
     dpp::webhook m_webhook = dpp::webhook(env::get("CROSSPOST_WEBHOOK").value_or(""));
 
 protected:
-    std::string getContent(dpp::message const& msg) const {
-        auto strs = asp::iter::split(msg.content, " ")
-                        .mapCast<std::string>()
-                        .collect();
+    std::string getContentTrimmed(dpp::message const& msg) const {
+        auto strs = asp::iter::split(msg.content, " ").collect();
         strs.erase(strs.begin());
 
         return string::join(std::move(strs), " ");
@@ -38,14 +36,14 @@ public:
                 auto const chnlMentions = message::extractChannels(msg.content);
                 if (!chnlMentions.empty()) {
                     auto channel = chnlMentions.front();
-                    auto const m = dpp::message(channel, getContent(msg));
+                    auto const m = dpp::message(channel, getContentTrimmed(msg));
 
                     log::info("Crosspost message by #{} ({}) contains mention for channel of ID {}", msg.author.username, msg.author.id, channel);
 
                     co_await ev.owner->co_message_create(m);
                 } else if (!msg.mentions.empty()) {
                     auto user = msg.mentions.front().second.user_id;
-                    auto const dm = dpp::message(getContent(msg));
+                    auto const dm = dpp::message(getContentTrimmed(msg));
 
                     log::info("Crosspost message by #{} ({}) contains mention for user of ID {}", msg.author.username, msg.author.id, user);
 
