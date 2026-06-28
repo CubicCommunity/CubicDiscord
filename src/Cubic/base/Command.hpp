@@ -4,6 +4,8 @@
 
 #include <Cubic/std.hpp>
 
+#include <Cubic/util/Macros.h>
+
 namespace cubic {
     namespace base {
         struct Command {
@@ -11,9 +13,9 @@ namespace cubic {
             Command() { getAll().emplace_back(this); };
             virtual ~Command() = default;
 
-            virtual std::string name() const noexcept = 0;
-            virtual dpp::slashcommand build() const = 0;
-            virtual dpp::task<void> handle(dpp::slashcommand_t const& ev) = 0;
+            virtual CUBIC_CMD_FUNC_NAME_SIGN = 0;
+            virtual CUBIC_CMD_FUNC_BUILD_SIGN = 0;
+            virtual CUBIC_CMD_FUNC_HANDLE_SIGN = 0;
 
             virtual constexpr bool needsThinking() const noexcept { return false; };
             virtual constexpr bool ephemeral() const noexcept { return false; };

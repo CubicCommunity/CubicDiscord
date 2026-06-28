@@ -4,6 +4,8 @@
 
 #include <Cubic/std.hpp>
 
+#include <Cubic/util/Macros.h>
+
 namespace cubic {
     namespace base {
         class EventHandler {
@@ -11,7 +13,7 @@ namespace cubic {
             EventHandler() { getAll().emplace_back(this); };
             virtual ~EventHandler() = default;
 
-            virtual void init(dpp::cluster& bot) = 0;
+            virtual CUBIC_EV_FUNC_INIT_SIGN = 0;
 
             static std::vector<EventHandler*>& getAll() {
                 static std::vector<EventHandler*> evs;

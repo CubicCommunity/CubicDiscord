@@ -35,11 +35,11 @@ static constexpr auto g_responses = std::to_array({
 
 class EightBallCommand final : public base::Command {
 public:
-    std::string name() const noexcept override {
+    CUBIC_CMD_FUNC_NAME {
         return "8-ball";
     };
 
-    dpp::slashcommand build() const override {
+    CUBIC_CMD_FUNC_BUILD {
         return dpp::slashcommand()
             .set_name(name())
             .set_description("Ask the magic 8-ball a yes-or-no question.")
@@ -56,7 +56,7 @@ public:
                     true));
     };
 
-    dpp::task<void> handle(dpp::slashcommand_t const& ev) override {
+    CUBIC_CMD_FUNC_HANDLE {
         auto const q = std::get<std::string>(ev.get_parameter("question"));
         log::trace("Asked the 8-ball: {}", q);
 
@@ -75,4 +75,4 @@ public:
     constexpr bool needsThinking() const noexcept override { return true; };
 };
 
-static EightBallCommand cmd;
+CUBIC_INIT_COMMAND(EightBallCommand);

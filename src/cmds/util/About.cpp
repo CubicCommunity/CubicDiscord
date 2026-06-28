@@ -4,11 +4,11 @@ using namespace cubic::prelude;
 
 class AboutCommand final : public base::Command {
 public:
-    std::string name() const noexcept override {
+    CUBIC_CMD_FUNC_NAME {
         return "about";
     };
 
-    dpp::slashcommand build() const override {
+    CUBIC_CMD_FUNC_BUILD {
         return dpp::slashcommand()
             .set_name(name())
             .set_description("Receive information about the current build of this bot.")
@@ -19,7 +19,7 @@ public:
             });
     };
 
-    dpp::task<void> handle(dpp::slashcommand_t const& ev) override {
+    CUBIC_CMD_FUNC_HANDLE {
         auto const& me = ev.owner->me;
 
         co_await ev.co_reply(
@@ -48,4 +48,4 @@ public:
     };
 };
 
-static AboutCommand ev;
+CUBIC_INIT_COMMAND(AboutCommand);

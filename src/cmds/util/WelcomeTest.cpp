@@ -4,11 +4,11 @@ using namespace cubic::prelude;
 
 class WelcomeTestCommand final : public base::Command {
 public:
-    std::string name() const noexcept override {
+    CUBIC_CMD_FUNC_NAME {
         return "test-welcome";
     };
 
-    dpp::slashcommand build() const override {
+    CUBIC_CMD_FUNC_BUILD {
         return dpp::slashcommand()
             .set_name(name())
             .set_description("Test the server's welcome DM.")
@@ -19,7 +19,7 @@ public:
             .set_default_permissions(dpp::permissions::p_manage_messages);
     };
 
-    dpp::task<void> handle(dpp::slashcommand_t const& ev) override {
+    CUBIC_CMD_FUNC_HANDLE {
         auto res = co_await ev.owner->co_direct_message_create(
             ev.command.usr.id,
             message::dm::welcome());
@@ -48,4 +48,4 @@ public:
     };
 };
 
-static WelcomeTestCommand cmd;
+CUBIC_INIT_COMMAND(WelcomeTestCommand);

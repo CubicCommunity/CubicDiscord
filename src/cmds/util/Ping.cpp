@@ -4,11 +4,11 @@ using namespace cubic::prelude;
 
 class PingCommand final : public base::Command {
 public:
-    std::string name() const noexcept override {
+    CUBIC_CMD_FUNC_NAME {
         return "ping";
     };
 
-    dpp::slashcommand build() const override {
+    CUBIC_CMD_FUNC_BUILD {
         return dpp::slashcommand()
             .set_name(name())
             .set_description("Ping the bot to test its speed.")
@@ -19,7 +19,7 @@ public:
             });
     };
 
-    dpp::task<void> handle(dpp::slashcommand_t const& ev) override {
+    CUBIC_CMD_FUNC_HANDLE {
         auto const start = asp::Instant::now();
 
         auto res = co_await ev.co_reply(dpp::message(":ping_pong:"));
@@ -53,4 +53,4 @@ public:
     };
 };
 
-static PingCommand cmd;
+CUBIC_INIT_COMMAND(PingCommand);

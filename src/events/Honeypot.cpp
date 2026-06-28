@@ -33,10 +33,11 @@ public:
             if (!perms.has_any(dpp::p_manage_messages, dpp::p_bypass_slowmode, dpp::p_pin_messages)) {
                 log::info("Suspicious user caught in honeypot");
 
+                co_await ev.owner->co_message_delete(msg.id, msg.channel_id);
+
                 auto const banRes = co_await ev.owner->co_guild_ban_add(msg.guild_id, msg.author.id, 604800);
                 if (banRes.is_error()) {
                     log::error("Failed to ban honeypot catch: {}", banRes.get_error().message);
-                    co_await ev.owner->co_message_delete(msg.id, msg.channel_id);
                     co_return;
                 };
 
