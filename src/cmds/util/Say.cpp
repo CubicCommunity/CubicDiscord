@@ -84,7 +84,14 @@ public:
                 dpp::command_option(
                     dpp::co_channel,
                     "channel",
-                    "The channel to send the message to."))
+                    "The channel to send the message to.")
+                    .add_channel_type(dpp::channel_type::CHANNEL_TEXT)
+                    .add_channel_type(dpp::channel_type::CHANNEL_PUBLIC_THREAD)
+                    .add_channel_type(dpp::channel_type::CHANNEL_PRIVATE_THREAD)
+                    .add_channel_type(dpp::channel_type::CHANNEL_VOICE)
+                    .add_channel_type(dpp::channel_type::CHANNEL_ANNOUNCEMENT)
+                    .add_channel_type(dpp::channel_type::CHANNEL_ANNOUNCEMENT_THREAD)
+                    .add_channel_type(dpp::channel_type::CHANNEL_STAGE))
             .add_option(
                 dpp::command_option(
                     dpp::co_boolean,
