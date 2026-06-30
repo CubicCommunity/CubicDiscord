@@ -6,30 +6,6 @@ int main() {
     auto& bot = Bot::get();
 
     bot.on_log(dpp::utility::cout_logger());
-    bot.on_log([](dpp::log_t const& ev) {
-        if (ev.owner && ev.severity >= dpp::loglevel::ll_error) {
-            auto now = asp::SystemTime::now().timeSinceEpoch().seconds();
-
-            auto web = Bot::getDevWebhook();
-            web.avatar_url = ev.owner->me.get_avatar_url(512);
-
-            ev.owner->execute_webhook(
-                web,
-                dpp::message()
-                    .add_embed(
-                        dpp::embed()
-                            .set_author("Shard Error", "", "")
-                            .set_description(fmt::format("```{}```", ev.message))
-                            .set_color(theme::colors::secondary)
-                            .add_field(
-                                "Shard",
-                                fmt::format("**`{}`**", ev.shard))
-                            .add_field(
-                                "Time of Error",
-                                fmt::format("<t:{}:F> • <t:{}:R>", now, now))
-                            .set_footer(ev.owner->me.username, web.avatar_url = ev.owner->me.get_avatar_url(512, CUBIC_AVATAR_FORMAT))));
-        };
-    });
 
 #ifdef CUBIC_LOCAL_BUILD
     log::warn("Bot is running on local test build.");
@@ -39,6 +15,25 @@ int main() {
 
     bot.on_slashcommand([](dpp::slashcommand_t const& ev) -> dpp::task<void> {
         if (auto cm = CommandManager::get()) co_await cm->handleCommand(ev);
+
+        auto now = asp::SystemTime::now().timeSinceEpoch().seconds();
+
+        auto web = Bot::getDevWebhook();
+        web.avatar_url = ev.owner->me.get_avatar_url(512);
+
+        ev.owner->execute_webhook(
+            web,
+            dpp::message()
+                .add_embed(
+                    dpp::embed()
+                        .set_author("Interaction", "", "")
+                        .set_description(fmt::format("Used **/{}** command", ev.command.get_command_name()))
+                        .set_color(theme::colors::primary)
+                        .add_field(
+                            "Used At",
+                            fmt::format("<t:{}:F> • <t:{}:R>", now, now))
+                        .set_footer(ev.command.member.get_user()->username, web.avatar_url = ev.command.member.get_user()->get_avatar_url(512, CUBIC_AVATAR_FORMAT))));
+
         co_return;
     });
 
