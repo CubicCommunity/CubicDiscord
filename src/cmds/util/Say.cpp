@@ -133,4 +133,4 @@ public:
     };
 };
 
-CUBIC_INIT_COMMAND(SayCommand);
+CUBIC_INIT(SayCommand);

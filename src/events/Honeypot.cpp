@@ -51,4 +51,4 @@ public:
     };
 };
 
-static HoneypotEvent ev;
+CUBIC_INIT(HoneypotEvent);

@@ -63,4 +63,4 @@ public:
     };
 };
 
-static CrosspostEvent ev;
+CUBIC_INIT(CrosspostEvent);

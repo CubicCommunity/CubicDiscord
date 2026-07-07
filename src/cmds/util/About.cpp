@@ -48,4 +48,4 @@ public:
     };
 };
 
-CUBIC_INIT_COMMAND(AboutCommand);
+CUBIC_INIT(AboutCommand);

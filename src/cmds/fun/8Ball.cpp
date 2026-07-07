@@ -75,4 +75,4 @@ public:
     constexpr bool needsThinking() const noexcept override { return true; };
 };
 
-CUBIC_INIT_COMMAND(EightBallCommand);
+CUBIC_INIT(EightBallCommand);

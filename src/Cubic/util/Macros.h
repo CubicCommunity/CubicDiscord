@@ -6,8 +6,8 @@
 #define CUBIC_AVATAR_FORMAT dpp::i_gif
 #endif
 
-#define CUBIC_INIT_COMMAND(T) \
-    static T cmd
+#define CUBIC_INIT(T) \
+    static T t
 
 #define CUBIC_CMD_FUNC_NAME_SIGN std::string name() const noexcept
 #define CUBIC_CMD_FUNC_BUILD_SIGN dpp::slashcommand build() const

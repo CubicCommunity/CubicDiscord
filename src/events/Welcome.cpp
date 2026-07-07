@@ -69,4 +69,4 @@ public:
     };
 };
 
-static WelcomeEvent ev;
+CUBIC_INIT(WelcomeEvent);

@@ -45,4 +45,4 @@ public:
     };
 };
 
-static IntroductionsEvent ev;
+CUBIC_INIT(IntroductionsEvent);

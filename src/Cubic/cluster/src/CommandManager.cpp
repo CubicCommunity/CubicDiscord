@@ -13,7 +13,7 @@ void CommandManager::registerAll(dpp::cluster& bot, dpp::snowflake server) {
     for (auto const& cmd : cmds) {
         auto name = cmd->name();
 
-        log::debug("Integrating '{}'...", name);
+        log::trace("Integrating '{}'...", name);
         m_commands[std::move(name)] = cmd;
     };
 
@@ -37,7 +37,7 @@ void CommandManager::registerAll(dpp::cluster& bot, dpp::snowflake server) {
 
 dpp::task<void> CommandManager::handleCommand(dpp::slashcommand_t const& event) {
     auto const name = event.command.get_command_name();
-    log::debug("Received command event for '{}'", name);
+    log::trace("Received command event for '{}'", name);
 
     if (event.command.type == dpp::interaction_type::it_application_command) {
         log::trace("Looking through {} entries to find '{}'...", m_commands.size(), name);

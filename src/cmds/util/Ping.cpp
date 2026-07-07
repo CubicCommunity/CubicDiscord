@@ -38,7 +38,7 @@ public:
         auto const end = asp::Instant::now();
         auto dur = end.durationSince(start).millis();
 
-        log::debug("Ping command latency: {}ms", dur);
+        log::trace("Ping command latency: {}ms", dur);
 
         co_await ev.co_edit_original_response(
             dpp::message()
@@ -53,4 +53,4 @@ public:
     };
 };
 
-CUBIC_INIT_COMMAND(PingCommand);
+CUBIC_INIT(PingCommand);

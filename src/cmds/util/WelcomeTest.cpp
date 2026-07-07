@@ -48,4 +48,4 @@ public:
     };
 };
 
-CUBIC_INIT_COMMAND(WelcomeTestCommand);
+CUBIC_INIT(WelcomeTestCommand);

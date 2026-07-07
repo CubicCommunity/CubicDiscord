@@ -25,7 +25,7 @@ namespace cubic {
         std::string const m_repository = "CubicCommunity/CubicDiscord";
 
     protected:
-        constexpr const char* getPlatformDomain() const noexcept;
+        static constexpr const char* getPlatformDomain(GitPlatform plat = GitPlatform::GitHub) noexcept;
 
     public:
         static asp::Duration getUptime() noexcept;
@@ -38,6 +38,7 @@ namespace cubic {
         std::string_view getBuildTag() const noexcept;
         uint8_t getBuildNumber() const noexcept;
 
+        std::string getRepositoryURL() const;
         std::string getVersionString(bool v = true, bool build = true) const;
     };
 };

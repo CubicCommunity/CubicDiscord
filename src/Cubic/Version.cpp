@@ -6,8 +6,8 @@ using namespace cubic::prelude;
 
 asp::SystemTime const Version::s_uptime = asp::SystemTime::now();
 
-constexpr const char* Version::getPlatformDomain() const noexcept {
-    switch (m_platform) {
+constexpr const char* Version::getPlatformDomain(GitPlatform plat) noexcept {
+    switch (plat) {
         default: [[fallthrough]];
 
         case GitPlatform::GitHub: return "github.com";
@@ -48,6 +48,10 @@ std::string Version::getVersionString(bool v, bool build) const {
     if (!v && !build) return base;
 
     return fmt::format("v{}", base);
+};
+
+std::string Version::getRepositoryURL() const {
+    return fmt::format("https://{}/{}", getPlatformDomain(m_platform), m_repository);
 };
 
 asp::Duration Version::getUptime() noexcept {
